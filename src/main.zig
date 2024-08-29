@@ -7,8 +7,8 @@ const title =
     \\Choices are: (R)ock, (P)aper, (S)cissors, (Q)uit
 ;
 
-pub var pScore: u16 = 0;
-pub var cScore: u16 = 0;
+pub var playerScore: u16 = 0;
+pub var computerScore: u16 = 0;
 pub var playMode: bool = true;
 
 const RockPaperScissorsError = error{InvalidChoice};
@@ -17,11 +17,11 @@ pub fn main() !void {
     std.debug.print("{s}\n", .{title});
 
     while (playMode and round.PlayTurn()) {
-        if (pScore == 3) {
+        if (playerScore == 3) {
             std.debug.print("\nPlayer Wins!\n\n", .{});
             break;
         }
-        if (cScore == 3) {
+        if (computerScore == 3) {
             std.debug.print("\nComputer Wins!\n\n", .{});
             break;
         }

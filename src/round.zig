@@ -12,7 +12,7 @@ const RockPaperScissors = enum {
     Scissors,
 };
 
-const WinLoseTie = enum {
+const RoundResult = enum {
     Win,
     Lose,
     Tie,
@@ -27,22 +27,8 @@ pub fn PlayTurn() bool {
     }
 }
 
-fn GetComputersChoice() RockPaperScissors {
-    var rand = std.rand.DefaultPrng.init(@as(u64, @bitCast(std.time.milliTimestamp())));
-    const randomNumber = @mod(rand.random().int(i32), 3);
-    // std.debug.print("random number is: {}\n", .{randomNumber});
-    const computersChoice = switch (randomNumber) {
-        0 => RockPaperScissors.Rock,
-        1 => RockPaperScissors.Paper,
-        2 => RockPaperScissors.Scissors,
-        else => unreachable,
-    };
-    // std.debug.print("{}", .{computersChoice});
-    return computersChoice;
-}
-
 fn GetPlayersChoice() ?RockPaperScissors {
-    const invalidEntry =
+    const invalidEntryMessage =
         \\ Invalid entry.
         \\ Choices are: (R)ock, (P)aper, (S)cissors, (Q)uit
     ;
@@ -75,7 +61,7 @@ fn GetPlayersChoice() ?RockPaperScissors {
                     playersChoice = RockPaperScissors.Scissors;
                     break;
                 } else {
-                    std.debug.print(invalidEntry, .{});
+                    std.debug.print(invalidEntryMessage, .{});
                 }
             } else unreachable;
         } else |err| {
@@ -86,6 +72,20 @@ fn GetPlayersChoice() ?RockPaperScissors {
 
     // std.debug.print("playersChoice: {}\n", .{playersChoice});
     return playersChoice;
+}
+
+fn GetComputersChoice() RockPaperScissors {
+    var rand = std.rand.DefaultPrng.init(@as(u64, @bitCast(std.time.milliTimestamp())));
+    const randomNumber = @mod(rand.random().int(i32), 3);
+    // std.debug.print("random number is: {}\n", .{randomNumber});
+    const computersChoice = switch (randomNumber) {
+        0 => RockPaperScissors.Rock,
+        1 => RockPaperScissors.Paper,
+        2 => RockPaperScissors.Scissors,
+        else => unreachable,
+    };
+    // std.debug.print("{}", .{computersChoice});
+    return computersChoice;
 }
 
 fn Result(pChoice: RockPaperScissors) void {
@@ -99,33 +99,33 @@ fn Result(pChoice: RockPaperScissors) void {
     // std.debug.print("cChoice: {any}\n", .{cChoice});
     // std.debug.print("pChoice: {any}\n", .{pChoice});
 
-    var wlt: WinLoseTie = undefined;
+    var wlt: RoundResult = undefined;
     if (pChoice == cChoice) {
-        wlt = WinLoseTie.Tie;
+        wlt = RoundResult.Tie;
     } else if (pChoice == RockPaperScissors.Rock and cChoice == RockPaperScissors.Scissors) {
-        wlt = WinLoseTie.Win;
+        wlt = RoundResult.Win;
     } else if (pChoice == RockPaperScissors.Paper and cChoice == RockPaperScissors.Rock) {
-        wlt = WinLoseTie.Win;
+        wlt = RoundResult.Win;
     } else if (pChoice == RockPaperScissors.Scissors and cChoice == RockPaperScissors.Paper) {
-        wlt = WinLoseTie.Win;
+        wlt = RoundResult.Win;
     } else {
-        wlt = WinLoseTie.Lose;
+        wlt = RoundResult.Lose;
     }
 
-    if (wlt == WinLoseTie.Tie) {
+    if (wlt == RoundResult.Tie) {
         // Nothing needs doing.
-    } else if (wlt == WinLoseTie.Win) {
-        main.pScore += 1;
-    } else if (wlt == WinLoseTie.Lose) {
-        main.cScore += 1;
+    } else if (wlt == RoundResult.Win) {
+        main.playerScore += 1;
+    } else if (wlt == RoundResult.Lose) {
+        main.computerScore += 1;
     }
 
-    // std.debug.print(results, .{ pChoice, cChoice, wlt, pScore, cScore });
+    // std.debug.print(results, .{ pChoice, cChoice, wlt, playerScore, computerScore });
     std.debug.print(results, .{
         @tagName(pChoice),
         @tagName(cChoice),
         @tagName(wlt),
-        main.pScore,
-        main.cScore,
+        main.playerScore,
+        main.computerScore,
     });
 }
